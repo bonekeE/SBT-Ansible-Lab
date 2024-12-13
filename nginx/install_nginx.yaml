@@ -1,0 +1,46 @@
+---
+- name: Install, setup and run Nginx
+  hosts: webservers
+  become: yes # root
+
+  vars:
+    domain_name: "hello_world"
+    site_root: "/hello/world/"
+
+  tasks:
+    - name: Update system
+      yum:
+        name: "*"
+        state: latest
+
+    - name: Install epel and Nginx
+      yum:
+        name:
+          - epel-release
+          - nginx
+        state: latest
+    
+    - name: Create directory
+      file:
+        path: "/var/www/html/{{ site_root }}"
+        state: directory
+        mode: 0755
+
+    - name: Copy html file
+      copy:
+        src: /home/albert/Ansible/nginx/resources/hello_world.html
+        dest: "/var/www/html/{{ site_root }}"
+        mode: 0644
+    
+    - name: Copy configuration file
+      copy:
+        src: /home/albert/Ansible/nginx/resources/nginx.conf
+        dest: "/etc/nginx/conf.d/{{ domain_name }}.conf"
+        mode: 0644
+    
+    - name: Restart Nginx
+      systemd:
+        name: nginx
+        state: restarted
+    
+  
