@@ -1,0 +1,5 @@
+---
+webservers:
+  hosts:
+    nginx-server:
+      ansible_host: 81.94.156.54
